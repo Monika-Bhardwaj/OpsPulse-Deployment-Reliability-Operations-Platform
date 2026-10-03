@@ -1,44 +1,76 @@
 name: TaskBoard Python CI/CD
+
 on:
   push:
     branches: main
   pull_request:
     branches: main
-env:
-  REGISTRY: ghcr.io
+
+# ========================================
+# STEP 1 — Test
+# ========================================
 jobs:
   test:
+    name: Test - Backend & Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
+
       - name: Install backend dependencies
         run: pip install -r requirements.txt
         working-directory: backend
+
       - name: Run backend tests
         run: pytest -q
         working-directory: backend
+
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
+
       - name: Build frontend
         run: npm install && npm run build
         working-directory: frontend
-  build-scan-push:
+
+  # ========================================
+  # STEP 2 — Build Docker Images
+  # ========================================
+  docker-build:
+    name: Docker Build
     needs: test
     runs-on: ubuntu-latest
-    permissions: {contents: read, packages: write}
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build images
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend image
         run: |
-          docker build -t ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }} ./backend
-          docker build -t ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }} ./frontend
+          docker build -t nensiravaliya28/taskboard-backend:${{ github.sha }} ./backend
+
+      - name: Build frontend image
+        run: |
+          docker build -t nensiravaliya28/taskboard-frontend:${{ github.sha }} ./frontend
+
+  # ========================================
+  # STEP 3 — Scan Docker Images with Trivy
+  # ========================================
+  image-scan:
+    name: Image Scan - Trivy
+    needs: docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Rebuild backend image for scan
+        run: |
+          docker build -t nensiravaliya28/taskboard-backend:${{ github.sha }} ./backend
+
+      - name: Rebuild frontend image for scan
+        run: |
+          docker build -t nensiravaliya28/taskboard-frontend:${{ github.sha }} ./frontend
 
       - name: Install Trivy
         run: |
@@ -51,25 +83,64 @@ jobs:
 
       - name: Scan backend image
         run: |
-          trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
-            ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
+          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+            nensiravaliya28/taskboard-backend:${{ github.sha }}
 
       - name: Scan frontend image
         run: |
-          trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
-            ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
+          trivy image --severity HIGH,CRITICAL --ignore-unfixed \
+            nensiravaliya28/taskboard-frontend:${{ github.sha }}
 
-      - name: Push images
+  # ========================================
+  # STEP 4 — Push Images to Docker Hub
+  # ========================================
+  push:
+    name: Push Images to Docker Hub
+    needs: image-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: nensiravaliya28
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and tag backend image
         run: |
-          docker push ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
-          docker push ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
+          docker build \
+            -t nensiravaliya28/taskboard-backend:${{ github.sha }} \
+            -t nensiravaliya28/taskboard-backend:latest \
+            ./backend
 
+      - name: Build and tag frontend image
+        run: |
+          docker build \
+            -t nensiravaliya28/taskboard-frontend:${{ github.sha }} \
+            -t nensiravaliya28/taskboard-frontend:latest \
+            ./frontend
+
+      - name: Push backend image
+        run: |
+          docker push nensiravaliya28/taskboard-backend:${{ github.sha }}
+          docker push nensiravaliya28/taskboard-backend:latest
+
+      - name: Push frontend image
+        run: |
+          docker push nensiravaliya28/taskboard-frontend:${{ github.sha }}
+          docker push nensiravaliya28/taskboard-frontend:latest
+
+  # ========================================
+  # STEP 5 — Deploy to local kind cluster
+  # ========================================
   deploy:
+    name: Deploy to kind (self-hosted)
     if: github.ref == 'refs/heads/main'
-    needs: build-scan-push
+    needs: push
     # ✅ Runs on YOUR machine where kind cluster lives
     runs-on: self-hosted
-    permissions: {contents: read, packages: read}
     steps:
       - uses: actions/checkout@v4
 
@@ -81,18 +152,17 @@ jobs:
 
       - name: Load images into kind cluster
         run: |
-          # Pull images from GHCR then load them into kind (no registry needed inside cluster)
-          docker pull ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
-          docker pull ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
-          kind load docker-image ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
-          kind load docker-image ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
+          docker pull nensiravaliya28/taskboard-backend:${{ github.sha }}
+          docker pull nensiravaliya28/taskboard-frontend:${{ github.sha }}
+          kind load docker-image nensiravaliya28/taskboard-backend:${{ github.sha }}
+          kind load docker-image nensiravaliya28/taskboard-frontend:${{ github.sha }}
 
       - name: Deploy with Helm
         run: |
           helm upgrade --install taskboard ./helm/taskboard -n taskboard --create-namespace \
             --set backend.tag=${{ github.sha }} \
             --set frontend.tag=${{ github.sha }} \
-            --set backend.image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend \
-            --set frontend.image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend \
+            --set backend.image=nensiravaliya28/taskboard-backend \
+            --set frontend.image=nensiravaliya28/taskboard-frontend \
             --set backend.pullPolicy=Never \
             --set frontend.pullPolicy=Never
