@@ -37,8 +37,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build images
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }} ./backend
-          docker build -t ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }} ./frontend
+          docker build -t ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }} ./backend
+          docker build -t ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }} ./frontend
+
       - name: Install Trivy
         run: |
           sudo apt-get install -y wget
@@ -51,16 +52,18 @@ jobs:
       - name: Scan backend image
         run: |
           trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
-            ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }}
+            ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
 
       - name: Scan frontend image
         run: |
           trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
-            ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }}
+            ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
+
       - name: Push images
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }}
+          docker push ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
+          docker push ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
+
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build-scan-push
@@ -79,17 +82,17 @@ jobs:
       - name: Load images into kind cluster
         run: |
           # Pull images from GHCR then load them into kind (no registry needed inside cluster)
-          docker pull ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }}
-          docker pull ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }}
-          kind load docker-image ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }}
-          kind load docker-image ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }}
+          docker pull ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
+          docker pull ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
+          kind load docker-image ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend:${{ github.sha }}
+          kind load docker-image ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend:${{ github.sha }}
 
       - name: Deploy with Helm
         run: |
           helm upgrade --install taskboard ./helm/taskboard -n taskboard --create-namespace \
             --set backend.tag=${{ github.sha }} \
             --set frontend.tag=${{ github.sha }} \
-            --set backend.image=ghcr.io/${{ github.repository_owner }}/taskboard-backend \
-            --set frontend.image=ghcr.io/${{ github.repository_owner }}/taskboard-frontend \
+            --set backend.image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-backend \
+            --set frontend.image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/taskboard-frontend \
             --set backend.pullPolicy=Never \
             --set frontend.pullPolicy=Never
