@@ -23,6 +23,19 @@ spec:
           env:
             - name: DATABASE_URL
               value: "sqlite:///./taskboard.db"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
 ---
 apiVersion: apps/v1
 kind: Deployment
