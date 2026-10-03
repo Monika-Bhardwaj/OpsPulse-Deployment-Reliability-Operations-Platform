@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskboard-backend
+  namespace: taskboard
+  labels:
+    app: taskboard-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskboard-backend
+  template:
+    metadata:
+      labels:
+        app: taskboard-backend
+    spec:
+      containers:
+        - name: backend
+          image: nensiravaliya28/taskboard-backend:__IMAGE_TAG__
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: "sqlite:///./taskboard.db"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskboard-frontend
+  namespace: taskboard
+  labels:
+    app: taskboard-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskboard-frontend
+  template:
+    metadata:
+      labels:
+        app: taskboard-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: nensiravaliya28/taskboard-frontend:__IMAGE_TAG__
+          ports:
+            - containerPort: 80

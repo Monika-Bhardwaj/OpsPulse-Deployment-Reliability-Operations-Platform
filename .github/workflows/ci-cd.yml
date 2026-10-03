@@ -133,36 +133,48 @@ jobs:
           docker push nensiravaliya28/taskboard-frontend:latest
 
   # ========================================
-  # STEP 5 — Deploy to local kind cluster
+  # STEP 5 — Deploy to Kubernetes
+  #          (only runs on push to main)
   # ========================================
   deploy:
-    name: Deploy to kind (self-hosted)
-    if: github.ref == 'refs/heads/main'
+    name: Deploy to Kubernetes
     needs: push
-    # ✅ Runs on YOUR machine where kind cluster lives
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+
+    # Skip this step on pull requests — only deploy real merges to main
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install Helm (if not present)
-        run: |
-          if ! command -v helm &> /dev/null; then
-            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          fi
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.10.0
 
-      - name: Load images into kind cluster
-        run: |
-          docker pull nensiravaliya28/taskboard-backend:${{ github.sha }}
-          docker pull nensiravaliya28/taskboard-frontend:${{ github.sha }}
-          kind load docker-image nensiravaliya28/taskboard-backend:${{ github.sha }}
-          kind load docker-image nensiravaliya28/taskboard-frontend:${{ github.sha }}
+      - name: Create namespace
+        run: kubectl apply -f k8s/namespace.yaml
 
-      - name: Deploy with Helm
+      - name: Update deployment with new image tag
         run: |
-          helm upgrade --install taskboard ./helm/taskboard -n taskboard --create-namespace \
-            --set backend.tag=${{ github.sha }} \
-            --set frontend.tag=${{ github.sha }} \
-            --set backend.image=nensiravaliya28/taskboard-backend \
-            --set frontend.image=nensiravaliya28/taskboard-frontend \
-            --set backend.pullPolicy=Never \
-            --set frontend.pullPolicy=Never
+          sed -i "s|__IMAGE_TAG__|${{ github.sha }}|g" k8s/deployment.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Check backend rollout status
+        run: |
+          kubectl rollout status deployment/taskboard-backend -n taskboard --timeout=120s
+
+      - name: Test backend API in CI (Curl)
+        run: |
+          kubectl port-forward service/taskboard-backend 8001:80 -n taskboard &
+          sleep 5
+
+          echo "🌐 Fetching health endpoint..."
+          curl -sf http://localhost:8001/health
+
+          echo -e "\n🌐 Fetching root API..."
+          curl -sf http://localhost:8001/
+
