@@ -60,20 +60,32 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: build-scan-push
-    runs-on: ubuntu-latest
+    # ✅ Runs on YOUR machine where kind cluster lives
+    runs-on: self-hosted
     permissions: {contents: read, packages: read}
     steps:
       - uses: actions/checkout@v4
-      - uses: azure/setup-helm@v4
-      - name: Configure kubectl
-        env: {KUBE_CONFIG_DATA: '${{ secrets.KUBE_CONFIG_DATA }}'}
+
+      - name: Install Helm (if not present)
         run: |
-          mkdir -p ~/.kube
-          echo "$KUBE_CONFIG_DATA" | base64 -d > ~/.kube/config
+          if ! command -v helm &> /dev/null; then
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          fi
+
+      - name: Load images into kind cluster
+        run: |
+          # Pull images from GHCR then load them into kind (no registry needed inside cluster)
+          docker pull ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }}
+          docker pull ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }}
+          kind load docker-image ghcr.io/${{ github.repository_owner }}/taskboard-backend:${{ github.sha }}
+          kind load docker-image ghcr.io/${{ github.repository_owner }}/taskboard-frontend:${{ github.sha }}
+
       - name: Deploy with Helm
         run: |
           helm upgrade --install taskboard ./helm/taskboard -n taskboard --create-namespace \
             --set backend.tag=${{ github.sha }} \
             --set frontend.tag=${{ github.sha }} \
             --set backend.image=ghcr.io/${{ github.repository_owner }}/taskboard-backend \
-            --set frontend.image=ghcr.io/${{ github.repository_owner }}/taskboard-frontend
+            --set frontend.image=ghcr.io/${{ github.repository_owner }}/taskboard-frontend \
+            --set backend.pullPolicy=Never \
+            --set frontend.pullPolicy=Never
