@@ -19,6 +19,7 @@ Submit a single GitHub repository link via the submission form. The repo must co
 2. **`demo/` folder** with:
    - 🎥 **Presentation video** (MP4) — **MANDATORY**
    - 📊 **PPT / PDF slide deck** — **MANDATORY**
+3. **`Submission Link:`**: https://forms.gle/XWAP1vAumDJgAPM1A
 
 ---
 
