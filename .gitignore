@@ -14,3 +14,8 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.db
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
