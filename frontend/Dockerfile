@@ -6,10 +6,11 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.27-alpine
-# Create non-root user for nginx
+# Create non-root user and configure nginx for unprivileged execution
 RUN addgroup -g 10001 -S appgroup && adduser -u 10001 -S appuser -G appgroup \
-    && touch /tmp/nginx.pid \
-    && chown -R appuser:appgroup /tmp/nginx.pid /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
+    && sed -i 's,/run/nginx.pid,/tmp/nginx.pid,g' /etc/nginx/nginx.conf \
+    && sed -i '/^user /d' /etc/nginx/nginx.conf \
+    && chown -R appuser:appgroup /var/cache/nginx /var/log/nginx /etc/nginx /tmp /usr/share/nginx/html
 
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
