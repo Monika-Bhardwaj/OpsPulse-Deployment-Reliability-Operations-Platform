@@ -81,6 +81,9 @@ spec:
         - name: frontend
           image: ghcr.io/monika-bhardwaj/opspulse-frontend:__IMAGE_TAG__
           imagePullPolicy: IfNotPresent
+          env:
+            - name: BACKEND_HOST
+              value: opspulse-backend
           ports:
             - containerPort: 8080
               name: http

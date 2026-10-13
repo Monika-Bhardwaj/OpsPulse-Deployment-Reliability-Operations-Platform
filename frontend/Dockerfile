@@ -22,4 +22,11 @@ USER 10001
 
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+# Default backend hostname for docker compose networking.
+# The Helm chart overrides this with the backend Service name.
+ENV BACKEND_HOST=backend
+
+# Render the backend hostname into the nginx config at container start.
+# Only $BACKEND_HOST is substituted so nginx variables ($host, $uri, …)
+# are left untouched.
+CMD ["sh", "-c", "envsubst '${BACKEND_HOST}' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && cp /tmp/default.conf /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"]

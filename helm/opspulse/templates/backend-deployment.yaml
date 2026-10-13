@@ -17,6 +17,38 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
+      initContainers:
+        - name: wait-for-db
+          image: "{{ .Values.backend.image }}:{{ .Values.backend.tag }}"
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+psycopg://{{ .Values.postgres.username }}:{{ .Values.postgres.password }}@{{ .Values.postgres.host }}:5432/{{ .Values.postgres.database }}"
+          command:
+            - python
+            - -c
+            - |
+              import os, socket, sys, time, urllib.parse
+              u = urllib.parse.urlparse(os.environ["DATABASE_URL"])
+              host, port = u.hostname, u.port or 5432
+              for i in range(60):
+                  try:
+                      s = socket.create_connection((host, port), timeout=3)
+                      s.close()
+                      print("database reachable, starting backend", flush=True)
+                      break
+                  except OSError as exc:
+                      print(f"waiting for postgres at {host}:{port} (attempt {i+1}/60): {exc}", flush=True)
+                      time.sleep(2)
+              else:
+                  print("database unreachable after 120s, giving up", flush=True)
+                  sys.exit(1)
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
       containers:
         - name: backend
           image: "{{ .Values.backend.image }}:{{ .Values.backend.tag }}"
