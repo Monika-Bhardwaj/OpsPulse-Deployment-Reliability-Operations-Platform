@@ -491,7 +491,7 @@ function App() {
           <div className="sidebar__profile">
             <div className="avatar">NR</div>
             <div>
-              <strong>Nency Ravaliya</strong>
+              <strong>Monika Bhardwaj</strong>
               <small>SRE Engineer</small>
             </div>
           </div>

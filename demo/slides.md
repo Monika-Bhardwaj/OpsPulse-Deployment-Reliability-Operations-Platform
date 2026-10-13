@@ -1,7 +1,7 @@
 # OpsPulse — Presentation Slide Deck
 
 **DevSecOps Capstone Project — Session 21**  
-**Presenter:** Nency Ravaliya  
+**Presenter:** Monika Bhardwaj  
 **Project:** OpsPulse — Production-Grade Deployment & Reliability Platform  
 
 ---

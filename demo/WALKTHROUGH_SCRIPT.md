@@ -1,6 +1,6 @@
 # OpsPulse — Final Capstone Presentation & Demo Walkthrough Script
 
-**Presenter:** Nency Ravaliya  
+**Presenter:** Monika Bhardwaj  
 **Duration:** 8–10 Minutes  
 **Target Audience:** DevOps Evaluators, Engineering Leadership, SRE Leads  
 
@@ -9,7 +9,7 @@
 ## Part 1: Presentation Deck Walkthrough (0:00 – 3:30)
 
 ### [0:00 - 0:45] Slide 1 & 2: Introduction & Project Overview
-> *"Hello everyone! My name is Nency Ravaliya, and today I am excited to present **OpsPulse** — a production-grade DevSecOps platform and reliability engineering capstone.*
+> *"Hello everyone! My name is Monika Bhardwaj, and today I am excited to present **OpsPulse** — a production-grade DevSecOps platform and reliability engineering capstone.*
 >
 > *In modern engineering environments, deployment visibility and incident response are often fragmented across multiple disparate tools. OpsPulse solves this by providing a unified operational ledger: tracking multi-environment releases, service health indicators, and incident remediation metrics like MTTR in real-time.*
 >

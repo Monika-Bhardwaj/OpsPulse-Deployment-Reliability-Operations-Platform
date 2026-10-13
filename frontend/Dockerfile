@@ -5,8 +5,10 @@ RUN npm ci --prefer-offline
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine
+FROM nginx:stable-alpine
 # Create non-root user and configure nginx for unprivileged execution
+RUN apk upgrade --no-cache
+
 RUN addgroup -g 10001 -S appgroup && adduser -u 10001 -S appuser -G appgroup \
     && sed -i 's,/run/nginx.pid,/tmp/nginx.pid,g' /etc/nginx/nginx.conf \
     && sed -i '/^user /d' /etc/nginx/nginx.conf \

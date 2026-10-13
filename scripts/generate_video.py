@@ -54,7 +54,7 @@ def generate_video():
             "title": "OpsPulse: Enterprise DevSecOps Platform",
             "subtitle": "Full-Stack Deployment & Reliability Platform Capstone (Session 21)",
             "bullets": [
-                "Presenter: Nency Ravaliya  |  Candidate Score: 100 / 100",
+                "Presenter: Monika Bhardwaj  |  Candidate Score: 100 / 100",
                 "Automated CI/CD Pipeline with Pytest & Trivy Vulnerability Gates",
                 "Infrastructure as Code: HashiCorp Terraform AWS VPC + EKS 1.31",
                 "Kubernetes & Helm: High Availability Multi-Replica Deployments & Ingress",
@@ -135,8 +135,8 @@ def generate_video():
                 "Stage 3: Ephemeral KinD Kubernetes cluster creation & end-to-end endpoint verification"
             ],
             "terminal": [
-                "Pushing to ghcr.io/nency-ravaliya/opspulse-backend:3f8e12a [PUBLISHED]",
-                "Pushing to ghcr.io/nency-ravaliya/opspulse-frontend:3f8e12a [PUBLISHED]",
+                "Pushing to ghcr.io/monika-bhardwaj/opspulse-backend:3f8e12a [PUBLISHED]",
+                "Pushing to ghcr.io/monika-bhardwaj/opspulse-frontend:3f8e12a [PUBLISHED]",
                 "Status: Pipeline Green (Passed in 2m 14s)"
             ]
         },
@@ -212,7 +212,7 @@ def generate_video():
                 "Thank you! Ready for evaluation and live demonstration."
             ],
             "terminal": [
-                "Repository: https://github.com/Nency-Ravaliya/devsecops-python",
+                "Repository: https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform",
                 "Verification: All tests passing, Dockerfiles non-root, IaC validated."
             ]
         }

@@ -71,7 +71,7 @@ def create_deck():
     p2.font.color.rgb = TEXT_MUTED
 
     p3 = tf1.add_paragraph()
-    p3.text = "\nPresenter: Nency Ravaliya  |  Session 21 DevOps Final Capstone"
+    p3.text = "\nPresenter: Monika Bhardwaj  |  Session 21 DevOps Final Capstone"
     p3.font.size = Pt(14)
     p3.font.color.rgb = ACCENT_INDIGO
 
