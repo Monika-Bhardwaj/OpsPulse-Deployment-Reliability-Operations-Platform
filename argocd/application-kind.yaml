@@ -1,0 +1,44 @@
+# Local kind-demo ArgoCD Application (NOT for AWS/production).
+#
+# Uses kind-loaded images (opspulse-{backend,frontend}:verify) instead of
+# GHCR, and disables the ServiceMonitor (no Prometheus Operator in kind).
+# Production GitOps state is argocd/application.yaml.
+#
+# Demo:
+#   kubectl apply -f argocd/application-kind.yaml
+#   argocd app get opspulse-kind   # via port-forward, or:
+#   kubectl -n argocd get applications
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opspulse-kind
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform.git
+    targetRevision: main
+    path: helm/opspulse
+    helm:
+      valueFiles:
+        - values.yaml
+      values: |
+        replicaCount: 3
+        backend:
+          image: opspulse-backend
+          tag: verify
+        frontend:
+          image: opspulse-frontend
+          tag: verify
+        monitoring:
+          serviceMonitor:
+            enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: opspulse
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
