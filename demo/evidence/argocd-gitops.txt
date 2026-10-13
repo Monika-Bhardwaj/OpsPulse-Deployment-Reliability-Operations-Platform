@@ -1,0 +1,21 @@
+=== ArgoCD application (GitOps) ===
+NAME            SYNC     HEALTH    REPO                                                                                         REV
+opspulse-kind   Synced   Healthy   https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform.git   059b9c7d23c3978585230c9d2bb9ca139450b790
+
+=== resources managed from Git ===
+PersistentVolumeClaim/opspulse-kind-opspulse-postgres-data Synced 
+ Secret/opspulse-kind-opspulse-postgres Synced 
+ Service/opspulse-kind-opspulse-backend Synced 
+ Service/opspulse-kind-opspulse-frontend Synced 
+ Service/opspulse-postgres Synced 
+ Deployment/opspulse-kind-opspulse-backend Synced 
+ Deployment/opspulse-kind-opspulse-frontend Synced 
+ Deployment/opspulse-kind-opspulse-postgres Synced 
+ HorizontalPodAutoscaler/opspulse-kind-opspulse-backend-hpa Synced 
+ HorizontalPodAutoscaler/opspulse-kind-opspulse-frontend-hpa Synced 
+ Ingress/opspulse-kind-opspulse Synced 
+ 
+=== GitOps loop demonstrated ===
+1. commit 059b9c7 (new repo state) auto-detected by ArgoCD
+2. ingress conflict with helm release diagnosed via app-controller logs, helm release removed
+3. HPA-vs-ArgoCD replica fight diagnosed, fixed with ignoreDifferences on apps/Deployment /spec/replicas
