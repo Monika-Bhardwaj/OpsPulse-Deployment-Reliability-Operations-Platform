@@ -23,7 +23,6 @@ spec:
       valueFiles:
         - values.yaml
       values: |
-        replicaCount: 3
         backend:
           image: opspulse-backend
           tag: verify
@@ -36,6 +35,14 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: opspulse
+  # HPA owns the replica count at runtime — without this, ArgoCD and the
+  # HPA fight forever (GitOps wants N, HPA sets M) and the app flaps
+  # between Synced and OutOfSync.
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
   syncPolicy:
     automated:
       prune: true
