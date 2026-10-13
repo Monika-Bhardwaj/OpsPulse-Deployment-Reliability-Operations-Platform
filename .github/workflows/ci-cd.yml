@@ -101,7 +101,7 @@ jobs:
 
       # DevSecOps Gate: Trivy image vulnerability scanning
       - name: Trivy Scan — Backend Image
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ghcr.io/${{ steps.repo_owner.outputs.owner }}/opspulse-backend:${{ github.sha }}
           format: "table"
@@ -110,7 +110,7 @@ jobs:
           exit-code: "1"
 
       - name: Trivy Scan — Frontend Image
-        uses: aquasecurity/trivy-action@0.29.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ghcr.io/${{ steps.repo_owner.outputs.owner }}/opspulse-frontend:${{ github.sha }}
           format: "table"
