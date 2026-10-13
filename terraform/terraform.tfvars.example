@@ -1,0 +1,7 @@
+# Example Terraform variable values for OpsPulse AWS infrastructure
+# Copy to terraform.tfvars and customize before running terraform plan / apply
+
+aws_region   = "ap-south-1"
+cluster_name = "opspulse-eks"
+environment  = "dev"
+vpc_cidr     = "10.20.0.0/16"

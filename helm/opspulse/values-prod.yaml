@@ -1,0 +1,20 @@
+frontend:
+  image: ghcr.io/nency-ravaliya/opspulse-frontend
+backend:
+  image: ghcr.io/nency-ravaliya/opspulse-backend
+replicaCount: 3
+ingress:
+  enabled: true
+  host: opspulse.example.com
+hpa:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi

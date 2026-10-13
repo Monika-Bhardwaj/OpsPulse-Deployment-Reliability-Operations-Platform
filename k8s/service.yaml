@@ -1,27 +1,33 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: taskboard-backend
-  namespace: taskboard
+  name: opspulse-backend
+  namespace: opspulse
+  labels:
+    app: opspulse-backend
 spec:
+  type: ClusterIP
   selector:
-    app: taskboard-backend
+    app: opspulse-backend
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 8000
-  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: taskboard-frontend
-  namespace: taskboard
+  name: opspulse-frontend
+  namespace: opspulse
+  labels:
+    app: opspulse-frontend
 spec:
-  selector:
-    app: taskboard-frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
   type: ClusterIP
+  selector:
+    app: opspulse-frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080

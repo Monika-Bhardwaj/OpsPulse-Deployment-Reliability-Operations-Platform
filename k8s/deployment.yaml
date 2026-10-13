@@ -1,61 +1,106 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: taskboard-backend
-  namespace: taskboard
+  name: opspulse-backend
+  namespace: opspulse
   labels:
-    app: taskboard-backend
+    app: opspulse-backend
+    app.kubernetes.io/name: opspulse-backend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: taskboard-backend
+      app: opspulse-backend
   template:
     metadata:
       labels:
-        app: taskboard-backend
+        app: opspulse-backend
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
       containers:
         - name: backend
-          image: nensiravaliya28/taskboard-backend:__IMAGE_TAG__
+          image: ghcr.io/nency-ravaliya/opspulse-backend:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
+              name: http
           env:
             - name: DATABASE_URL
-              value: "sqlite:///./taskboard.db"
+              value: "sqlite:////tmp/opspulse.db"
+            - name: APP_NAME
+              value: "OpsPulse API"
+            - name: APP_VERSION
+              value: "1.0.0"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           readinessProbe:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             periodSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 20
+            initialDelaySeconds: 15
             periodSeconds: 10
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: taskboard-frontend
-  namespace: taskboard
+  name: opspulse-frontend
+  namespace: opspulse
   labels:
-    app: taskboard-frontend
+    app: opspulse-frontend
+    app.kubernetes.io/name: opspulse-frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: taskboard-frontend
+      app: opspulse-frontend
   template:
     metadata:
       labels:
-        app: taskboard-frontend
+        app: opspulse-frontend
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
       containers:
         - name: frontend
-          image: nensiravaliya28/taskboard-frontend:__IMAGE_TAG__
+          image: ghcr.io/nency-ravaliya/opspulse-frontend:__IMAGE_TAG__
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+              name: http
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10

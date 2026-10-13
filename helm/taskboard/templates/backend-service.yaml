@@ -6,6 +6,6 @@ metadata:
 spec:
   selector: {app: taskboard-backend}
   ports:
-    - port: 8000
+    - port: 80
       targetPort: 8000
       name: http

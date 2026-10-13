@@ -1,0 +1,32 @@
+frontend:
+  image: ghcr.io/nency-ravaliya/opspulse-frontend
+  tag: latest
+backend:
+  image: ghcr.io/nency-ravaliya/opspulse-backend
+  tag: latest
+replicaCount: 2
+namespace: opspulse
+imagePullSecrets: []
+postgres:
+  host: opspulse-postgres
+  database: opspulse
+  username: opspulse
+  password: opspulse
+ingress:
+  enabled: true
+  host: opspulse.local
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 60
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+monitoring:
+  serviceMonitor:
+    enabled: true
