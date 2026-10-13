@@ -22,7 +22,7 @@ spec:
         fsGroup: 10001
       containers:
         - name: backend
-          image: ghcr.io/nency-ravaliya/opspulse-backend:__IMAGE_TAG__
+          image: ghcr.io/monika-bhardwaj/opspulse-backend:__IMAGE_TAG__
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -79,7 +79,7 @@ spec:
         fsGroup: 10001
       containers:
         - name: frontend
-          image: ghcr.io/nency-ravaliya/opspulse-frontend:__IMAGE_TAG__
+          image: ghcr.io/monika-bhardwaj/opspulse-frontend:__IMAGE_TAG__
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

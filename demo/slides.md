@@ -10,7 +10,7 @@
 ### **OPSPULSE**
 #### Production-Grade DevSecOps Platform & Reliability Capstone
 - **Core Pillars:** Automated CI/CD · Trivy Vulnerability Gates · Terraform AWS EKS · Helm & GitOps · Prometheus Observability
-- **Repository:** https://github.com/Nency-Ravaliya/devsecops-python
+- **Repository:** https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform
 
 ---
 

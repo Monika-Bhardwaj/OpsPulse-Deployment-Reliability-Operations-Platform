@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Nency-Ravaliya/devsecops-python.git
+    repoURL: https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform.git
     targetRevision: main
     path: helm/opspulse
     helm:

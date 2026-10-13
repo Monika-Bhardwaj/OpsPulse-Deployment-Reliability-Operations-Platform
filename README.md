@@ -1,6 +1,6 @@
 # OpsPulse — Enterprise DevSecOps & Reliability Platform
 
-[![CI/CD Pipeline](https://github.com/Nency-Ravaliya/devsecops-python/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Nency-Ravaliya/devsecops-python/actions)
+[![CI/CD Pipeline](https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)

@@ -1,7 +1,7 @@
 frontend:
-  image: ghcr.io/nency-ravaliya/opspulse-frontend
+  image: ghcr.io/monika-bhardwaj/opspulse-frontend
 backend:
-  image: ghcr.io/nency-ravaliya/opspulse-backend
+  image: ghcr.io/monika-bhardwaj/opspulse-backend
 replicaCount: 3
 ingress:
   enabled: true

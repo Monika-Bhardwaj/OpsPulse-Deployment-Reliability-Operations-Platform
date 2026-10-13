@@ -160,8 +160,8 @@ jobs:
 
       - name: Substitute image tag in manifests
         run: |
-          sed -i "s|ghcr.io/nency-ravaliya/opspulse-backend:__IMAGE_TAG__|ghcr.io/${{ steps.repo_owner.outputs.owner }}/opspulse-backend:${{ github.sha }}|g" k8s/deployment.yaml
-          sed -i "s|ghcr.io/nency-ravaliya/opspulse-frontend:__IMAGE_TAG__|ghcr.io/${{ steps.repo_owner.outputs.owner }}/opspulse-frontend:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|ghcr.io/monika-bhardwaj/opspulse-backend:__IMAGE_TAG__|ghcr.io/${{ steps.repo_owner.outputs.owner }}/opspulse-backend:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|ghcr.io/monika-bhardwaj/opspulse-frontend:__IMAGE_TAG__|ghcr.io/${{ steps.repo_owner.outputs.owner }}/opspulse-frontend:${{ github.sha }}|g" k8s/deployment.yaml
 
       - name: Deploy application to cluster
         run: |

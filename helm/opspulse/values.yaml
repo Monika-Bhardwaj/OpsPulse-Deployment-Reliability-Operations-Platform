@@ -1,8 +1,8 @@
 frontend:
-  image: ghcr.io/nency-ravaliya/opspulse-frontend
+  image: ghcr.io/monika-bhardwaj/opspulse-frontend
   tag: latest
 backend:
-  image: ghcr.io/nency-ravaliya/opspulse-backend
+  image: ghcr.io/monika-bhardwaj/opspulse-backend
   tag: latest
 replicaCount: 2
 namespace: opspulse
