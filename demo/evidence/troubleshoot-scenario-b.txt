@@ -1,0 +1,4 @@
+=== SCENARIO B: selector mismatch ===
+selector: {"app":"label-that-does-not-exist"}
+NAME             ENDPOINTS   AGE
+broken-service   <none>      5s

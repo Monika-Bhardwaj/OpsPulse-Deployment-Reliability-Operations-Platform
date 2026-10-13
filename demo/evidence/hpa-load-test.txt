@@ -1,0 +1,13 @@
+=== HPA under load (busybox wget loop vs /api/stats) ===
+NAME                             REFERENCE                               TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+opspulse-opspulse-backend-hpa    Deployment/opspulse-opspulse-backend    cpu: 116%/60%   2         6         6          13m
+opspulse-opspulse-frontend-hpa   Deployment/opspulse-opspulse-frontend   cpu: 2%/60%     2         6         2          13m
+
+=== pods ===
+NAME                                         READY   STATUS    RESTARTS   AGE
+opspulse-opspulse-backend-75b49b9b54-5t7wb   1/1     Running   0          2m30s
+opspulse-opspulse-backend-75b49b9b54-q7cqx   1/1     Running   0          11m
+opspulse-opspulse-backend-75b49b9b54-t2nql   1/1     Running   0          2m15s
+opspulse-opspulse-backend-75b49b9b54-zcfdm   1/1     Running   0          10m
+opspulse-opspulse-backend-75b49b9b54-zqn52   1/1     Running   0          2m15s
+opspulse-opspulse-backend-75b49b9b54-zt9cf   1/1     Running   0          2m15s

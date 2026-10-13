@@ -15,8 +15,8 @@ locally-captured output. Nothing here is fabricated or copied from docs.
 | 8 | Terraform `fmt` + `validate` | `terraform fmt -check && terraform validate` in `terraform/` | ✅ verified |
 | 9 | Slide deck (11 slides) | `presentation.pptx` (+ `slides.md`) | ✅ regenerated 2026-10-14 |
 | 10 | Presentation video | `presentation.mp4` | ✅ regenerated 2026-10-14 |
-| 11 | GitHub Actions green run + GHCR SHA tags | Actions tab of this repo after push to `main` | ⏳ pending push |
-| 12 | kind-cluster deploy: pods Running, svc, ingress, HPA, ArgoCD sync, Prometheus UP, Grafana panels | local kind run (no AWS creds available) | ⏳ in progress |
+| 11 | GitHub Actions green run + GHCR SHA tags | `ci-green-run.txt` (run 38475891288, 3m44s, images `ghcr.io/monika-bhardwaj/opspulse-{backend,frontend}:78d5534…`) | ✅ captured 2026-10-14 |
+| 12 | kind-cluster deploy: pods Running, svc, ingress, HPA, Prometheus UP, Grafana live query | `kind-cluster-state.txt`, `hpa-load-test.txt` (2→6 replicas), `grafana-panel-query.txt`, `troubleshoot-scenario-{a,b}.txt` | ✅ captured 2026-10-14 |
 | 13 | AWS VPC/EKS console + `terraform destroy` | **BLOCKED** — no AWS credentials provided for this assignment | ❌ needs credentials |
 
 ## Files

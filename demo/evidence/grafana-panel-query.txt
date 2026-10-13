@@ -1,0 +1,1 @@
+grafana->prometheus range query points: 7 | latest req/s: 183.44

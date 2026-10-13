@@ -1,0 +1,5 @@
+=== SCENARIO A: ImagePullBackOff ===
+NAME                                     READY   STATUS             RESTARTS   AGE
+opspulse-broken-image-79fdd5f77d-49mv8   0/1     ImagePullBackOff   0          28s
+    Image:          ghcr.io/example/opspulse-backend:does-not-exist
+  Warning  Failed     10s (x2 over 27s)  kubelet            spec.containers{backend}: Failed to pull image "ghcr.io/example/opspulse-backend:does-not-exist": failed to pull and unpack image "ghcr.io/example/opspulse-backend:does-not-exist": failed to resolve reference "ghcr.io/example/opspulse-backend:does-not-exist": failed to authorize: failed to fetch anonymous token: unexpected status from GET request to https://ghcr.io/token?scope=repository%3Aexample%2Fopspulse-backend%3Apull&service=ghcr.io: 403 Forbidden

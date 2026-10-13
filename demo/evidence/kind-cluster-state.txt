@@ -1,0 +1,27 @@
+=== helm releases ===
+NAME    	NAMESPACE	REVISION	UPDATED                                	STATUS  	CHART         	APP VERSION
+opspulse	opspulse 	2       	2026-10-14 03:22:57.618901177 +0530 IST	deployed	opspulse-1.0.0	1.0.0      
+
+=== pods/svc/ingress/hpa ===
+NAME                                              READY   STATUS    RESTARTS   AGE
+pod/grafana-b9d7f64bc-pkbtr                       1/1     Running   0          10m
+pod/opspulse-opspulse-backend-75b49b9b54-q7cqx    1/1     Running   0          21m
+pod/opspulse-opspulse-backend-75b49b9b54-zcfdm    1/1     Running   0          21m
+pod/opspulse-opspulse-frontend-85d87f9bd7-4b5fv   1/1     Running   0          21m
+pod/opspulse-opspulse-frontend-85d87f9bd7-5pgtk   1/1     Running   0          21m
+pod/opspulse-opspulse-postgres-68c5b55885-c6sgx   1/1     Running   0          23m
+pod/prom-68776cc97d-gd8kk                         1/1     Running   0          14m
+
+NAME                                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/grafana                      ClusterIP   10.96.190.104   <none>        3000/TCP   10m
+service/opspulse-opspulse-backend    ClusterIP   10.96.155.90    <none>        80/TCP     23m
+service/opspulse-opspulse-frontend   ClusterIP   10.96.196.6     <none>        80/TCP     23m
+service/opspulse-postgres            ClusterIP   10.96.235.97    <none>        5432/TCP   23m
+service/prom                         ClusterIP   10.96.88.255    <none>        9090/TCP   14m
+
+NAME                                          CLASS   HOSTS            ADDRESS     PORTS   AGE
+ingress.networking.k8s.io/opspulse-opspulse   nginx   opspulse.local   localhost   80      23m
+
+NAME                                                                 REFERENCE                               TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/opspulse-opspulse-backend-hpa    Deployment/opspulse-opspulse-backend    cpu: 4%/60%   2         6         2          23m
+horizontalpodautoscaler.autoscaling/opspulse-opspulse-frontend-hpa   Deployment/opspulse-opspulse-frontend   cpu: 2%/60%   2         6         2          23m

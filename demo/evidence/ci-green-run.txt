@@ -1,0 +1,14 @@
+=== CI run 38475891288 — SUCCESS (3m44s) ===
+URL: https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform/actions/runs/38475891288
+
+=== images built with SHA tags ===
+ghcr.io/monika-bhardwaj/opspulse-backend:78d553487dc7e8acf6a7e1acb2824e3ae129e4a5 done
+ghcr.io/monika-bhardwaj/opspulse-backend:latest done
+ghcr.io/monika-bhardwaj/opspulse-frontend:78d553487dc7e8acf6a7e1acb2824e3ae129e4a5 done
+ghcr.io/monika-bhardwaj/opspulse-frontend:latest done
+
+=== images pushed ===
+docker push ghcr.io/monika-bhardwaj/opspulse-backend:78d553487dc7e8acf6a7e1acb2824e3ae129e4a5
+
+=== trivy gate (HIGH,CRITICAL, exit-code 1) — 0 errors ===
+error count: 0
