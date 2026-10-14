@@ -5,7 +5,7 @@ locally-captured output. Nothing here is fabricated or copied from docs.
 
 | # | Evidence | File / how to reproduce | Status |
 |---|---|---|---|
-| 1 | Backend tests (24 passed) | `python3 -m pytest tests/ -v` in `backend/` | ✅ verified 2026-10-14 |
+| 1 | Backend tests (29 passed) | `python3 -m pytest tests/ -v` in `backend/` | ✅ verified 2026-10-14 |
 | 2 | Frontend tests (5 passed) | `npm test` in `frontend/` | ✅ verified 2026-10-14 |
 | 3 | `docker compose up --build` — all 3 services healthy | `docker compose ps` after `up` | ✅ verified 2026-10-14 |
 | 4 | Trivy backend scan — 0 HIGH/CRITICAL (exit 0) | `trivy-backend-scan.txt` | ✅ captured 2026-10-14 |

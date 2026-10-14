@@ -80,7 +80,7 @@ OpsPulse is architected for zero-trust, high availability, and defense-in-depth 
 | **Backend API** | FastAPI & Python 3.12 | Async REST API with OpenAPI documentation, Pydantic V2 validation, and CORS |
 | **Database** | PostgreSQL 16 & SQLite | Relational persistence with psycopg3 connection pooling; in-memory SQLite for testing |
 | **Migrations** | Alembic 1.14 | Schema version control managing tables, foreign keys, and indexes |
-| **Testing** | Pytest 8.3 & Pytest-Cov | 24 test cases covering health, CRUD, filtering, pagination, and metrics |
+| **Testing** | Pytest 8.3 & Pytest-Cov | 29 test cases covering health, CRUD incl. PUT/PATCH, filtering, pagination, and metrics |
 | **Security Scanning** | Aquasecurity Trivy | Automated vulnerability scanner gate with `--exit-code 1` on HIGH/CRITICAL CVEs |
 | **Registry** | GitHub Container Registry | Immutable image publishing using Git commit SHA tags |
 | **IaC** | HashiCorp Terraform 1.16+ | Modularized provisioning of AWS VPC (Multi-AZ) and Amazon EKS 1.31 cluster |
@@ -104,7 +104,7 @@ devsecops-python/
 │   │   ├── models.py         # SQLAlchemy ORM models (Deployment, Incident, Environment)
 │   │   └── schemas.py        # Pydantic models for request validation & responses
 │   ├── tests/                # Test suite
-│   │   └── test_api.py       # 24 Pytest unit/integration tests
+│   │   └── test_api.py       # 29 Pytest unit/integration tests
 │   ├── Dockerfile            # Python 3.12-slim multi-worker container (UID 10001)
 │   ├── requirements.txt      # Pinned Python dependencies
 │   └── pytest.ini            # Pytest execution configuration
@@ -189,7 +189,7 @@ cd backend
 python3 -m pytest tests/test_api.py -v
 ```
 
-### Test Coverage Summary (24/24 Passed)
+### Test Coverage Summary (29/29 Passed)
 - **Health & Readiness**: `/health` returns `{status: "UP"}` and `/ready` verifies database query execution.
 - **Deployment Lifecycle**: Create (`POST`), List (`GET`), Retrieve (`GET /{id}`), Update (`PUT /{id}`), and Delete (`DELETE /{id}`).
 - **Status Constraints**: Enforces valid status transitions (`PENDING`, `RUNNING`, `SUCCESS`, `FAILED`, `CANCELLED`).
@@ -228,7 +228,7 @@ The automated pipeline (`.github/workflows/ci-cd.yml`) triggers on every push an
         │
         ├──> Stage 1: Test & Quality Gate
         │       ├── Setup Python 3.12 & Node.js 22
-        │       ├── Run Pytest test suite (24 tests)
+        │       ├── Run Pytest test suite (29 tests)
         │       └── Compile React production bundle (npm run build)
         │
         ├──> Stage 2: Container Build & Security Scan
@@ -352,7 +352,7 @@ All mandatory presentation materials are preserved in the `demo/` folder:
 | Module | Criteria | Points | Status |
 |---|---|---|---|
 | **M1 Application** | FastAPI `/health`, 4+ CRUD endpoints, PostgreSQL Alembic, React UI | 10/10 | ✅ Complete |
-| **M2 Testing** | 24 Pytest tests, 100% passing, test DB isolation, pytest.ini | 10/10 | ✅ Complete |
+| **M2 Testing** | 29 Pytest tests, 100% passing, test DB isolation, pytest.ini | 10/10 | ✅ Complete |
 | **M3 Git/GitHub** | Public repo, descriptive commits, clean .gitignore (no secrets) | 5/5 | ✅ Complete |
 | **M4 Docker** | Multi-stage Dockerfiles, non-root UID 10001, compose health checks | 10/10 | ✅ Complete |
 | **M5 CI/CD** | GitHub Actions pipeline, pytest gate, GHCR push with Git SHA tags | 15/15 | ✅ Complete |

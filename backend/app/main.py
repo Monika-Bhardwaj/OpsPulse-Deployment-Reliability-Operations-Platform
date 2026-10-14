@@ -171,6 +171,18 @@ def update_deployment(deployment_id: int, payload: DeploymentUpdate, db: Session
     return dep
 
 
+@app.put("/api/deployments/{deployment_id}", response_model=DeploymentOut)
+def replace_deployment(deployment_id: int, payload: DeploymentCreate, db: Session = Depends(get_db)):
+    """Full replacement update: every field comes from the request body."""
+    dep = _get_or_404(db, Deployment, deployment_id)
+    for key, value in payload.model_dump().items():
+        setattr(dep, key, value)
+    db.commit()
+    db.refresh(dep)
+    logger.info("Deployment %d replaced (PUT)", dep.id)
+    return dep
+
+
 @app.delete("/api/deployments/{deployment_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_deployment(deployment_id: int, db: Session = Depends(get_db)):
     dep = _get_or_404(db, Deployment, deployment_id)
@@ -224,6 +236,23 @@ def update_incident(incident_id: int, payload: IncidentUpdate, db: Session = Dep
         inc.resolved_at = datetime.now(timezone.utc)
     db.commit()
     db.refresh(inc)
+    return inc
+
+
+@app.put("/api/incidents/{incident_id}", response_model=IncidentOut)
+def replace_incident(incident_id: int, payload: IncidentCreate, db: Session = Depends(get_db)):
+    """Full replacement update: every field comes from the request body."""
+    from datetime import datetime, timezone
+    inc = _get_or_404(db, Incident, incident_id)
+    for key, value in payload.model_dump().items():
+        setattr(inc, key, value)
+    if payload.status == "RESOLVED" and not inc.resolved_at:
+        inc.resolved_at = datetime.now(timezone.utc)
+    elif payload.status != "RESOLVED":
+        inc.resolved_at = None
+    db.commit()
+    db.refresh(inc)
+    logger.info("Incident %d replaced (PUT)", inc.id)
     return inc
 
 

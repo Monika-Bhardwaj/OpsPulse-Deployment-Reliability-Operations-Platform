@@ -294,3 +294,80 @@ def test_metrics_endpoint_returns_prometheus_format(client):
     resp = client.get("/metrics")
     assert resp.status_code == 200
     assert "http_requests_total" in resp.text or "http_request" in resp.text
+
+
+# ── PUT (full replacement) ─────────────────────────────────────────────────
+
+
+def test_put_deployment_replaces_all_fields(client):
+    created = client.post(
+        "/api/deployments",
+        json={"service_name": "put-svc", "version": "v1", "status": "PENDING"},
+    ).json()
+    resp = client.put(
+        f"/api/deployments/{created['id']}",
+        json={
+            "service_name": "put-svc-renamed",
+            "version": "v2",
+            "status": "SUCCESS",
+            "deployed_by": "release-manager",
+            "notes": "full replace",
+        },
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["service_name"] == "put-svc-renamed"
+    assert data["version"] == "v2"
+    assert data["status"] == "SUCCESS"
+    assert data["deployed_by"] == "release-manager"
+
+
+def test_put_deployment_not_found(client):
+    resp = client.put(
+        "/api/deployments/999999",
+        json={"service_name": "ghost", "version": "v0"},
+    )
+    assert resp.status_code == 404
+
+
+def test_put_deployment_validation_failure(client):
+    created = client.post(
+        "/api/deployments",
+        json={"service_name": "put-validate-svc", "version": "v1"},
+    ).json()
+    resp = client.put(
+        f"/api/deployments/{created['id']}",
+        json={"service_name": "", "version": "v1"},
+    )
+    assert resp.status_code == 422
+
+
+def test_put_incident_replaces_all_fields(client):
+    created = client.post(
+        "/api/incidents",
+        json={"title": "put incident", "severity": "LOW", "status": "OPEN"},
+    ).json()
+    resp = client.put(
+        f"/api/incidents/{created['id']}",
+        json={
+            "title": "put incident resolved",
+            "description": "fixed via full replace",
+            "severity": "HIGH",
+            "status": "RESOLVED",
+            "affected_service": "api",
+            "owner": "on-call",
+        },
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "RESOLVED"
+    assert data["severity"] == "HIGH"
+    assert data["resolved_at"] is not None
+
+
+def test_put_incident_not_found(client):
+    resp = client.put(
+        "/api/incidents/999999",
+        json={"title": "ghost incident"},
+    )
+    assert resp.status_code == 404

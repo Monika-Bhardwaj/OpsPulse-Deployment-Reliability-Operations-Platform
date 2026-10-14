@@ -58,7 +58,7 @@
 ### [4:15 - 5:15] Demo 2: CI/CD Pipeline & Trivy DevSecOps Gate
 - **Action:** Show `.github/workflows/ci-cd.yml` in action.
 - **Walkthrough:**
-  1. Trigger test run (`pytest tests/test_api.py -v`). Show 24 passed tests.
+  1. Trigger test run (`pytest tests/test_api.py -v`). Show 29 passed tests.
   2. Show Trivy scanning step blocking HIGH/CRITICAL CVEs.
   3. Show successful GHCR publication with commit SHA tag.
   4. Show automated KinD cluster testing in CI.
