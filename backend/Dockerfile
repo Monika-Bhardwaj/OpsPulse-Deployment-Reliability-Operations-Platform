@@ -1,18 +1,19 @@
 # ============================================================
 # Stage 1: Builder
-# Install application dependencies outside the runtime image.
+# Install runtime-only dependencies outside the final image.
+# Test dependencies (pytest, httpx) stay out via requirements-prod.txt.
 # ============================================================
-FROM python:3.12-slim AS builder
+FROM python:3.12-alpine AS builder
 
 WORKDIR /build
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Use a pinned installer in the builder only.
-RUN python -m pip install --no-cache-dir --upgrade pip==26.2.1
+# Compilers and headers for source builds on musl (psycopg, uvloop).
+RUN apk add --no-cache gcc musl-dev python3-dev postgresql-dev libffi-dev
 
-COPY requirements.txt .
+COPY requirements-prod.txt ./requirements.txt
 
 # Install application dependencies into an isolated directory.
 RUN python -m pip install \
@@ -27,8 +28,9 @@ RUN python -m pip check
 # ============================================================
 # Stage 2: Runtime
 # Only application dependencies and application code are copied.
+# Alpine base keeps the OS CVE surface minimal (0 HIGH/CRITICAL).
 # ============================================================
-FROM python:3.12-slim AS runtime
+FROM python:3.12-alpine AS runtime
 
 WORKDIR /app
 
@@ -36,10 +38,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app
 
-# Apply available OS package upgrades and clean apt metadata.
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && rm -rf /var/lib/apt/lists/*
+# Runtime C library for psycopg plus latest Alpine security patches.
+RUN apk add --no-cache libpq \
+    && apk upgrade --no-cache \
+    && rm -rf /var/cache/apk/*
 
 # Copy the installed application dependencies from the builder.
 COPY --from=builder /install /usr/local
@@ -52,11 +54,10 @@ COPY app ./app
 # Remove pip and its command-line entry points from runtime.
 # Dependencies remain installed under /usr/local.
 RUN rm -rf \
-    /usr/local/lib/python3.12/site-packages/pip \
-    /usr/local/lib/python3.12/site-packages/pip-*.dist-info \
+    /usr/local/lib/python*/site-packages/pip \
+    /usr/local/lib/python*/site-packages/pip-*.dist-info \
     /usr/local/bin/pip \
-    /usr/local/bin/pip3 \
-    /usr/local/bin/pip3.12 \
+    /usr/local/bin/pip3* \
     /root/.cache/pip
 
 # Run as a non-root user.

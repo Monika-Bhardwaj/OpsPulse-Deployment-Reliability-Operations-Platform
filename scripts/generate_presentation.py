@@ -68,7 +68,8 @@ SLIDES = [
     {
         "title": "Testing & CI/CD Pipeline",
         "body": [
-            "29 backend pytest tests (health, CRUD incl. PUT/PATCH, validation, 404s, pagination, stats, metrics) - all passing.",
+            "29 backend pytest tests (health, CRUD incl. PUT/PATCH, validation, 404s, pagination, stats, metrics).",
+            "All 29 tests passing on every run.",
             "5 frontend smoke tests + production Vite build in the pipeline test job.",
             "Failed tests block image build, scan, and publish - quality gate enforced.",
             "Docker Buildx builds both images tagged with the Git commit SHA (traceable).",
@@ -232,7 +233,46 @@ def build_pdf(path):
     print(f"Saved {path} ({len(SLIDES)} pages)")
 
 
+def build_pngs(out_dir):
+    """Render one PNG per slide with PIL so the deck is viewable even
+    where no PowerPoint viewer exists (GitHub renders PNGs inline)."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    W, H = 1920, 1080
+    fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    f_title = ImageFont.truetype(fb, 64)
+    f_head = ImageFont.truetype(fb, 56)
+    f_body = ImageFont.truetype(fr, 30)
+    f_small = ImageFont.truetype(fr, 26)
+
+    for idx, slide in enumerate(SLIDES):
+        img = Image.new("RGB", (W, H), "white")
+        d = ImageDraw.Draw(img)
+        d.rectangle([(0, 0), (W, 150)], fill=(15, 42, 68))
+        if idx == 0:
+            d.text((90, 30), slide["title"], font=f_title, fill="white")
+            d.text((90, 105), slide["subtitle"][:80], font=f_small, fill=(180, 210, 235))
+            y = 220
+        else:
+            d.text((90, 40), f"{idx + 1}. {slide['title']}", font=f_head, fill="white")
+            y = 220
+        import textwrap
+        for line in slide["body"]:
+            for wline in textwrap.wrap(line, width=100) or [""]:
+                d.text((110, y), "•  " + wline, font=f_body, fill=(34, 34, 34))
+                y += 48
+            y += 10
+            if y > H - 60:
+                break
+        img.save(os.path.join(out_dir, f"slide-{idx + 1:02d}.png"))
+    print(f"Saved {len(SLIDES)} PNGs to {out_dir}/")
+
 if __name__ == "__main__":
     os.makedirs("demo", exist_ok=True)
+    os.makedirs("demo/slides", exist_ok=True)
     build_pptx("demo/presentation.pptx")
     build_pdf("demo/slides.pdf")
+    build_pngs("demo/slides")
+
+

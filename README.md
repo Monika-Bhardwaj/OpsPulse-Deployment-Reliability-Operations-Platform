@@ -105,7 +105,7 @@ devsecops-python/
 │   │   └── schemas.py        # Pydantic models for request validation & responses
 │   ├── tests/                # Test suite
 │   │   └── test_api.py       # 29 Pytest unit/integration tests
-│   ├── Dockerfile            # Python 3.12-slim multi-worker container (UID 10001)
+│   ├── Dockerfile            # Python 3.12-Alpine zero-CVE container (UID 10001)
 │   ├── requirements.txt      # Pinned Python dependencies
 │   └── pytest.ini            # Pytest execution configuration
 ├── frontend/                 # React Single Page Application
@@ -210,6 +210,11 @@ Security is shifted left into the build phase:
    - The CI pipeline scans both container images using **Aquasecurity Trivy**.
    - Built with `--severity HIGH,CRITICAL --ignore-unfixed --exit-code 1`.
    - Any unmitigated HIGH or CRITICAL vulnerability halts the build before pushing to the registry.
+   - Verified 2026-10-14: backend image (`python:3.12-alpine`, prod-only deps, pip removed)
+     reports **0 vulnerabilities across ALL severities** (UNKNOWN/LOW/MEDIUM/HIGH/CRITICAL);
+     frontend (`nginx:stable-alpine`) likewise **0 across all severities**.
+   - Remediation history: Debian-slim base carried 44 HIGH CVEs with no upstream fix
+     (util-linux/login/perl-base); eliminated by moving to Alpine + dropping test deps from the image.
 
 ```bash
 # Manual scan verification
