@@ -138,6 +138,7 @@ OpsPulse-Deployment-Reliability-Operations-Platform/
 │   ├── slides/               # One PNG per slide (always viewable)
 │   ├── WALKTHROUGH_SCRIPT.md # Step-by-step live demonstration script
 │   └── evidence/             # Genuine captured outputs + checklist (README.md)
+├── screenshots/              # Browser + terminal screenshots of every verified step (README.md)
 ├── .github/workflows/
 │   └── ci-cd.yml             # Test → build/scan/push → deploy pipeline
 └── README.md                 # This file (full technical documentation)
@@ -328,6 +329,8 @@ All presentation materials live in the `demo/` folder:
 - 📊 **Slide Deck**: [`demo/presentation.pptx`](./demo/presentation.pptx) (11 slides, standard layouts)
 - 📄 **Slides as PDF**: [`demo/slides.pdf`](./demo/slides.pdf) (previews inline on GitHub)
 - 🖼️ **Slides as PNGs**: [`demo/slides/`](./demo/slides/) (one image per slide, always viewable)
+- 📸 **Verification Screenshots**: [`screenshots/`](./screenshots/) (dashboard, Swagger, Prometheus UP,
+  populated Grafana, passing tests, clean Trivy gates, K8s state, ArgoCD Synced)
 - 🎙️ **Live Demo Script**: [`demo/WALKTHROUGH_SCRIPT.md`](./demo/WALKTHROUGH_SCRIPT.md) (step-by-step demonstration flow)
 - 🧾 **Evidence**: [`demo/evidence/`](./demo/evidence/) (genuine outputs + checklist)
 
