@@ -76,7 +76,7 @@ OpsPulse is architected for zero-trust, high availability, and defense-in-depth 
 | Layer | Component | Description |
 |---|---|---|
 | **Frontend** | React 18 & Vite | Single Page Application with OpsPulse design system, dark mode, and KPI counters |
-| **Frontend Server** | Nginx 1.27 Alpine | Multi-stage production container, unprivileged non-root on port 8080 |
+| **Frontend Server** | Nginx stable-alpine | Multi-stage production container, unprivileged non-root on port 8080 |
 | **Backend API** | FastAPI & Python 3.12 | Async REST API with OpenAPI documentation, Pydantic V2 validation, and CORS |
 | **Database** | PostgreSQL 16 & SQLite | Relational persistence with psycopg3 connection pooling; in-memory SQLite for testing |
 | **Migrations** | Alembic 1.14 | Schema version control managing tables, foreign keys, and indexes |
@@ -93,7 +93,7 @@ OpsPulse is architected for zero-trust, high availability, and defense-in-depth 
 ## 3. Repository Structure
 
 ```text
-devsecops-python/
+OpsPulse-Deployment-Reliability-Operations-Platform/
 ├── backend/                  # FastAPI Application
 │   ├── alembic/              # Database schema migrations
 │   │   └── versions/         # Migration versions (0001_create_opspulse.py)
@@ -106,53 +106,38 @@ devsecops-python/
 │   ├── tests/                # Test suite
 │   │   └── test_api.py       # 29 Pytest unit/integration tests
 │   ├── Dockerfile            # Python 3.12-Alpine zero-CVE container (UID 10001)
-│   ├── requirements.txt      # Pinned Python dependencies
+│   ├── requirements.txt      # Pinned dependencies (incl. test deps)
+│   ├── requirements-prod.txt# Runtime-only dependencies for the image build
+│   ├── seed.py               # Explicit dev-data seeder (never auto-runs)
 │   └── pytest.ini            # Pytest execution configuration
 ├── frontend/                 # React Single Page Application
 │   ├── src/
 │   │   ├── main.jsx          # React components: Dashboard, Deployments, Incidents, Modals
 │   │   └── styles.css        # OpsPulse design system styling
+│   ├── tests/                # 5 Node smoke tests (npm test)
 │   ├── index.html            # HTML5 entry point with SEO metadata
-│   ├── nginx.conf            # Unprivileged Nginx configuration with API proxying
+│   ├── nginx.conf            # Unprivileged Nginx config (BACKEND_HOST injected at start)
 │   ├── package.json          # React 18, Vite 5 pinned dependencies
 │   ├── vite.config.js        # Vite build tool configuration
-│   └── Dockerfile            # Multi-stage Node 22 build + Nginx Alpine runtime (UID 10001)
+│   └── Dockerfile            # Multi-stage Node 22 build + Nginx stable-alpine (UID 10001)
 ├── docker-compose.yml        # Multi-container local stack with health checks
-├── terraform/                # AWS Infrastructure as Code
-│   ├── main.tf               # VPC and EKS module definitions
-│   ├── variables.tf          # Configurable parameters with validation blocks
-│   ├── outputs.tf            # Cluster endpoints and subnet IDs
-│   ├── versions.tf           # Terraform and AWS provider constraints
-│   ├── terraform.tfvars.example # Safe variable template (no credentials)
-│   └── README.md             # IaC deployment instructions
-├── helm/                     # Kubernetes Helm Packaging
-│   └── opspulse/             # OpsPulse Helm chart
-│       ├── Chart.yaml        # Chart metadata
-│       ├── values.yaml       # Base configuration with 2 replicas and GHCR images
-│       ├── values-dev.yaml   # Dev environment overrides
-│       ├── values-prod.yaml  # Production high-availability overrides
-│       └── templates/        # Kubernetes manifests (Deployments, Services, Ingress, HPA, PVC)
-├── k8s/                      # Kubernetes Base Manifests
-│   ├── namespace.yaml        # Dedicated 'opspulse' namespace
-│   ├── deployment.yaml       # 2-replica Deployments with securityContext & probes
-│   ├── service.yaml          # ClusterIP services for frontend and backend
-│   └── ingress.yaml          # Path-based Ingress routing
-├── argocd/                   # GitOps Declarative Deployment
-│   └── application.yaml      # ArgoCD Application CRD targeting helm/opspulse
-├── monitoring/               # SRE Observability
-│   ├── prometheus-values.yaml# kube-prometheus-stack Helm values
-│   └── grafana-dashboard.json# 6-panel SRE reliability dashboard
-├── demo/                     # Presentation & Video Artifacts
-│   ├── presentation.pptx     # 11-slide PowerPoint presentation deck
-│   ├── slides.md             # Markdown slide deck companion
-│   ├── WALKTHROUGH_SCRIPT.md # Video narration and live demonstration script
-│   └── presentation.mp4      # Demo video artifact
-├── scripts/                  # Automation & Testing Scripts
-│   ├── load-test.sh          # Synthetic traffic generator
-│   └── generate_presentation.py # Programmatic slide generation
+├── terraform/                # AWS Infrastructure as Code (VPC + EKS, ap-south-1)
+├── helm/opspulse/            # Kubernetes Helm chart (deployments, services, ingress, HPA, postgres)
+├── k8s/                      # Plain manifests used by the CI deploy job
+├── argocd/                   # GitOps Applications (prod + kind-demo with local overrides)
+├── monitoring/               # Prometheus values + 8-panel Grafana dashboard JSON
+├── troubleshooting/          # Isolated broken manifests (ImagePullBackOff, selector mismatch)
+├── scripts/                  # load-test.sh, generate_presentation.py, generate_video.py
+├── demo/
+│   ├── presentation.pptx     # 11-slide deck (standard layouts, every viewer)
+│   ├── slides.pdf            # Same deck as PDF (previews inline on GitHub)
+│   ├── slides/               # One PNG per slide (always viewable)
+│   ├── WALKTHROUGH_SCRIPT.md # Recording script for the demo video
+│   ├── presentation.mp4      # ⚠️ placeholder render — replace with real recording
+│   └── evidence/             # Genuine captured outputs + checklist (README.md)
 ├── .github/workflows/
-│   └── ci-cd.yml             # End-to-end GitHub Actions pipeline with Trivy gate
-└── GRADING.md                # Capstone evaluation rubric & criteria
+│   └── ci-cd.yml             # Test → build/scan/push → deploy pipeline
+└── README.md                 # This file (full technical documentation)
 ```
 
 ---
@@ -336,17 +321,22 @@ Import the custom Grafana dashboard from `monitoring/grafana-dashboard.json` to 
 
 ## 12. Presentation & Demo Artifacts
 
-All mandatory presentation materials are preserved in the `demo/` folder:
-- 📊 **Slide Deck**: [`demo/presentation.pptx`](./demo/presentation.pptx) (11-slide complete architectural deck)
-- 📄 **Markdown Slides**: [`demo/slides.md`](./demo/slides.md)
-- 🎙️ **Walkthrough Script**: [`demo/WALKTHROUGH_SCRIPT.md`](./demo/WALKTHROUGH_SCRIPT.md) (Complete spoken script with timestamps)
-- 🎥 **Presentation Video**: [`demo/presentation.mp4`](./demo/presentation.mp4)
+All presentation materials live in the `demo/` folder:
+- 📊 **Slide Deck**: [`demo/presentation.pptx`](./demo/presentation.pptx) (11 slides, standard layouts)
+- 📄 **Slides as PDF**: [`demo/slides.pdf`](./demo/slides.pdf) (previews inline on GitHub)
+- 🖼️ **Slides as PNGs**: [`demo/slides/`](./demo/slides/) (one image per slide, always viewable)
+- 🎙️ **Recording Script**: [`demo/WALKTHROUGH_SCRIPT.md`](./demo/WALKTHROUGH_SCRIPT.md) (step-by-step narration)
+- 🎥 **Presentation Video**: [`demo/presentation.mp4`](./demo/presentation.mp4) — ⚠️ currently a programmatic
+  placeholder render. It must be replaced with a real screen recording made by following
+  `WALKTHROUGH_SCRIPT.md` before submission; a script alone does not satisfy the video requirement.
+- 🧾 **Evidence**: [`demo/evidence/`](./demo/evidence/) (genuine outputs + checklist)
 
 ---
 
 ## 13. Known Limitations & Future Roadmap
 
-- **External Identity Provider**: Current implementation uses RBAC and token headers; integration with Keycloak/OAuth2 is planned.
+- **No authentication yet**: the API and UI are open by design for this classroom demo.
+  Do not expose them publicly as-is; Keycloak/OAuth2 integration is the planned next step.
 - **Distributed Tracing**: Metrics are fully implemented; adding OpenTelemetry Jaeger traces for database spans is on the roadmap.
 - **Canary Deployments**: Argo Rollouts integration for progressive traffic shifting during releases.
 
@@ -364,6 +354,6 @@ All mandatory presentation materials are preserved in the `demo/` folder:
 | **M6 DevSecOps** | Trivy scan on backend/frontend with `--exit-code 1` on HIGH/CRITICAL | 5/5 | ✅ Complete |
 | **M7 Terraform** | Valid HCL, VPC + EKS modules, validation, tfvars.example | 15/15 | ✅ Complete |
 | **M8 Kubernetes** | Namespace, 2 replicas, Ingress path routing, Helm chart | 15/15 | ✅ Complete |
-| **M9 Observability** | `/metrics` endpoint, ServiceMonitor, Grafana 6-panel dashboard JSON | 10/10 | ✅ Complete |
+| **M9 Observability** | `/metrics` endpoint, ServiceMonitor, Grafana 8-panel dashboard JSON | 10/10 | ✅ Complete |
 | **M10 Documentation** | Full README, 11-slide PPTX deck, walkthrough script, demo video | 5/5 | ✅ Complete |
 | **TOTAL** | **Full DevSecOps Capstone Score** | **100/100** | **✅ PASS** |

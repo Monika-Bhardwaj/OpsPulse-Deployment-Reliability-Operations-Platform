@@ -13,7 +13,7 @@ locally-captured output. Nothing here is fabricated or copied from docs.
 | 6 | Live API smoke (`/health`, `/ready`, `/api/stats`, `/metrics`) | `curl http://localhost:8000/...` with compose stack up | ✅ verified 2026-10-14 |
 | 7 | Seed script (`backend/seed.py --reset` → 3 env / 3 deploys / 2 incidents) | `DATABASE_URL=... python3 seed.py --reset` | ✅ verified 2026-10-14 |
 | 8 | Terraform `fmt` + `validate` | `terraform fmt -check && terraform validate` in `terraform/` | ✅ verified |
-| 9 | Slide deck (11 slides) | `presentation.pptx` (+ `slides.md`) | ✅ regenerated 2026-10-14 |
+| 9 | Slide deck (11 slides) | `presentation.pptx` + `slides.pdf` + `slides/*.png` | ✅ regenerated 2026-10-14 |
 | 10 | Presentation video | `presentation.mp4` | ✅ regenerated 2026-10-14 |
 | 11 | GitHub Actions green run + GHCR SHA tags | `ci-green-run.txt` (run 38475891288, 3m44s, images `ghcr.io/monika-bhardwaj/opspulse-{backend,frontend}:78d5534…`) | ✅ captured 2026-10-14 |
 | 12 | kind-cluster deploy: pods Running, svc, ingress, HPA, Prometheus UP, Grafana live query, ArgoCD Synced/Healthy | `kind-cluster-state.txt`, `hpa-load-test.txt` (2→6→2 replicas), `grafana-panel-query.txt`, `troubleshoot-scenario-{a,b}.txt`, `argocd-gitops.txt` | ✅ captured 2026-10-14 |
