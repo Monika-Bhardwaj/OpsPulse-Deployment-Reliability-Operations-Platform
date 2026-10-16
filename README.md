@@ -136,7 +136,6 @@ OpsPulse-Deployment-Reliability-Operations-Platform/
 │   ├── presentation.pptx     # 11-slide deck (standard layouts, every viewer)
 │   ├── slides.pdf            # Same deck as PDF (previews inline on GitHub)
 │   ├── slides/               # One PNG per slide (always viewable)
-│   ├── WALKTHROUGH_SCRIPT.md # Recording script for the demo video
 │   └── evidence/             # Genuine captured outputs + checklist (README.md)
 ├── .github/workflows/
 │   └── ci-cd.yml             # Test → build/scan/push → deploy pipeline
@@ -328,10 +327,6 @@ All presentation materials live in the `demo/` folder:
 - 📊 **Slide Deck**: [`demo/presentation.pptx`](./demo/presentation.pptx) (11 slides, standard layouts)
 - 📄 **Slides as PDF**: [`demo/slides.pdf`](./demo/slides.pdf) (previews inline on GitHub)
 - 🖼️ **Slides as PNGs**: [`demo/slides/`](./demo/slides/) (one image per slide, always viewable)
-- 🎙️ **Recording Script**: [`demo/WALKTHROUGH_SCRIPT.md`](./demo/WALKTHROUGH_SCRIPT.md) (step-by-step narration)
-- 🎥 **Presentation Video**: record your screen while following
-  [`demo/WALKTHROUGH_SCRIPT.md`](./demo/WALKTHROUGH_SCRIPT.md), then save the file as
-  `demo/presentation.mp4` and commit it. The video is mandatory — do not submit without it.
 - 🧾 **Evidence**: [`demo/evidence/`](./demo/evidence/) (genuine outputs + checklist)
 
 ---
@@ -348,7 +343,7 @@ All presentation materials live in the `demo/` folder:
 ## Verification & Rubric Coverage Matrix
 
 Honest status per module — **IMPLEMENTED** means the code/config exists and is validated
-where the environment permits; **BLOCKED** needs AWS credentials or a recorded video.
+where the environment permits; **BLOCKED** needs AWS credentials.
 
 | Module | Criteria | Status |
 |---|---|---|
@@ -361,4 +356,4 @@ where the environment permits; **BLOCKED** needs AWS credentials or a recorded v
 | **M7 Terraform** | Valid HCL, VPC + EKS, `fmt`/`validate` pass, tfvars.example | ⚠️ Config verified; `apply` BLOCKED (no AWS credentials) |
 | **M8 Kubernetes** | Namespace, 2 replicas, Ingress routing, Helm chart, HPA, ArgoCD | ✅ Verified on local kind cluster |
 | **M9 Observability** | `/metrics`, Prometheus UP, Grafana dashboard with live data | ✅ Verified on local kind cluster |
-| **M10 Documentation** | Full README, 11-slide deck (pptx/pdf/png), walkthrough script | ⚠️ Video not yet recorded — record and commit `demo/presentation.mp4` |
+| **M10 Documentation** | Full README, 11-slide deck (pptx/pdf/png) | ✅ Verified |

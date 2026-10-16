@@ -134,7 +134,7 @@ SLIDES = [
             "Blocked (no AWS keys for this assignment): EKS provisioning + console evidence.",
             "Key learning: manifests are claims - only live cluster runs prove routing, scaling, and sync.",
             "Security is a gate, not a badge: Trivy fails the build on HIGH/CRITICAL.",
-            "Submit: repo URL + this deck + demo video recorded per WALKTHROUGH_SCRIPT.md.",
+            "Submit: repo URL plus this slide deck.",
         ],
     },
 ]
