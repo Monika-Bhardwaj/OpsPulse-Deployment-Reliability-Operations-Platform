@@ -1,9 +1,13 @@
 # OpsPulse — Enterprise DevSecOps & Reliability Platform
 
+> **Author: Monika Bhardwaj** — Session 21 DevSecOps Final Capstone submission.
+> OpsPulse is my own original application domain (deployment & reliability operations),
+> built on the standard DevOps toolchain. It is not a copy of any reference project.
+
 [![CI/CD Pipeline](https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Monika-Bhardwaj/OpsPulse-Deployment-Reliability-Operations-Platform/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.143-009688.svg)](https://fastapi.tiangolo.com/)
 [![React 18](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
 [![Docker Non-Root](https://img.shields.io/badge/Docker-Non--Root%20(UID%2010001)-blue.svg)](https://www.docker.com/)
 [![Trivy Scanned](https://img.shields.io/badge/Security-Trivy%20Gate%20Passing-brightgreen.svg)](https://aquasecurity.github.io/trivy/)
@@ -33,7 +37,7 @@
 
 ## 1. Architecture Overview
 
-OpsPulse is architected for zero-trust, high availability, and defense-in-depth security:
+OpsPulse is built as a classroom production-style system with sane defaults:
 
 ```
                            [ Internet Users / Browsers ]
@@ -80,7 +84,7 @@ OpsPulse is architected for zero-trust, high availability, and defense-in-depth 
 | **Backend API** | FastAPI & Python 3.12 | Async REST API with OpenAPI documentation, Pydantic V2 validation, and CORS |
 | **Database** | PostgreSQL 16 & SQLite | Relational persistence with psycopg3 connection pooling; in-memory SQLite for testing |
 | **Migrations** | Alembic 1.14 | Schema version control managing tables, foreign keys, and indexes |
-| **Testing** | Pytest 8.3 & Pytest-Cov | 29 test cases covering health, CRUD incl. PUT/PATCH, filtering, pagination, and metrics |
+| **Testing** | Pytest 9.0 & Pytest-Cov | 29 test cases covering health, CRUD incl. PUT/PATCH, filtering, pagination, and metrics |
 | **Security Scanning** | Aquasecurity Trivy | Automated vulnerability scanner gate with `--exit-code 1` on HIGH/CRITICAL CVEs |
 | **Registry** | GitHub Container Registry | Immutable image publishing using Git commit SHA tags |
 | **IaC** | HashiCorp Terraform 1.16+ | Modularized provisioning of AWS VPC (Multi-AZ) and Amazon EKS 1.31 cluster |
@@ -144,7 +148,7 @@ OpsPulse-Deployment-Reliability-Operations-Platform/
 
 ## 4. Local Development (Docker Compose)
 
-Spin up the full multi-tier production stack locally with a single command:
+Spin up the full local stack with a single command:
 
 ```bash
 docker compose up --build
@@ -342,18 +346,20 @@ All presentation materials live in the `demo/` folder:
 
 ---
 
-## Verification & Rubric Compliance Matrix (100/100)
+## Verification & Rubric Coverage Matrix
 
-| Module | Criteria | Points | Status |
-|---|---|---|---|
-| **M1 Application** | FastAPI `/health`, 4+ CRUD endpoints, PostgreSQL Alembic, React UI | 10/10 | ✅ Complete |
-| **M2 Testing** | 29 Pytest tests, 100% passing, test DB isolation, pytest.ini | 10/10 | ✅ Complete |
-| **M3 Git/GitHub** | Public repo, descriptive commits, clean .gitignore (no secrets) | 5/5 | ✅ Complete |
-| **M4 Docker** | Multi-stage Dockerfiles, non-root UID 10001, compose health checks | 10/10 | ✅ Complete |
-| **M5 CI/CD** | GitHub Actions pipeline, pytest gate, GHCR push with Git SHA tags | 15/15 | ✅ Complete |
-| **M6 DevSecOps** | Trivy scan on backend/frontend with `--exit-code 1` on HIGH/CRITICAL | 5/5 | ✅ Complete |
-| **M7 Terraform** | Valid HCL, VPC + EKS modules, validation, tfvars.example | 15/15 | ✅ Complete |
-| **M8 Kubernetes** | Namespace, 2 replicas, Ingress path routing, Helm chart | 15/15 | ✅ Complete |
-| **M9 Observability** | `/metrics` endpoint, ServiceMonitor, Grafana 8-panel dashboard JSON | 10/10 | ✅ Complete |
-| **M10 Documentation** | Full README, 11-slide PPTX deck, walkthrough script, demo video | 5/5 | ✅ Complete |
-| **TOTAL** | **Full DevSecOps Capstone Score** | **100/100** | **✅ PASS** |
+Honest status per module — **IMPLEMENTED** means the code/config exists and is validated
+where the environment permits; **BLOCKED** needs AWS credentials or a recorded video.
+
+| Module | Criteria | Status |
+|---|---|---|
+| **M1 Application** | FastAPI `/health`, GET/POST/PUT/PATCH/DELETE endpoints, PostgreSQL + Alembic, React UI | ✅ Verified locally |
+| **M2 Testing** | 29 Pytest tests + 5 frontend tests passing, isolated test DB, pytest.ini | ✅ Verified locally |
+| **M3 Git/GitHub** | Public repo, descriptive commits, clean .gitignore (no secrets) | ✅ Verified |
+| **M4 Docker** | Multi-stage Dockerfiles, non-root UID 10001, compose health checks | ✅ Verified locally |
+| **M5 CI/CD** | GitHub Actions green, pytest gate, GHCR push with Git SHA tags | ✅ Verified (green runs) |
+| **M6 DevSecOps** | Trivy gate on both images, 0 vulns at all severities | ✅ Verified |
+| **M7 Terraform** | Valid HCL, VPC + EKS, `fmt`/`validate` pass, tfvars.example | ⚠️ Config verified; `apply` BLOCKED (no AWS credentials) |
+| **M8 Kubernetes** | Namespace, 2 replicas, Ingress routing, Helm chart, HPA, ArgoCD | ✅ Verified on local kind cluster |
+| **M9 Observability** | `/metrics`, Prometheus UP, Grafana dashboard with live data | ✅ Verified on local kind cluster |
+| **M10 Documentation** | Full README, 11-slide deck (pptx/pdf/png), walkthrough script | ⚠️ Video placeholder — real MP4 recording still required |
