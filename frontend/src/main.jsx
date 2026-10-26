@@ -459,7 +459,21 @@ function DashboardView() {
 // ── App Shell ──────────────────────────────────────────────────────────────
 
 function App() {
-  const [view, setView] = useState('dashboard');
+  const [view, setView] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    return ['dashboard', 'deployments', 'incidents'].includes(hash) ? hash : 'dashboard';
+  });
+
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (['dashboard', 'deployments', 'incidents'].includes(hash)) {
+        setView(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '▦' },

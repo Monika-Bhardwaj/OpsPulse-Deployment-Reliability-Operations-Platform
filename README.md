@@ -133,6 +133,7 @@ OpsPulse-Deployment-Reliability-Operations-Platform/
 ├── troubleshooting/          # Isolated broken manifests (ImagePullBackOff, selector mismatch)
 ├── scripts/                  # load-test.sh, generate_presentation.py
 ├── demo/
+│   ├── video.mp4             # Full HD 1080p demonstration video covering each evaluation stage
 │   ├── presentation.pptx     # 11-slide deck (standard layouts, every viewer)
 │   ├── slides.pdf            # Same deck as PDF (previews inline on GitHub)
 │   ├── slides/               # One PNG per slide (always viewable)
@@ -326,6 +327,7 @@ Import the custom Grafana dashboard from `monitoring/grafana-dashboard.json` to 
 ## 12. Presentation & Demo Artifacts
 
 All presentation materials live in the `demo/` folder:
+- 🎥 **Evaluation Walkthrough Video**: [`demo/video.mp4`](./demo/video.mp4) (Full HD 1080p demonstration video walking through each evaluation stage as per `demo/WALKTHROUGH_SCRIPT.md`)
 - 📊 **Slide Deck**: [`demo/presentation.pptx`](./demo/presentation.pptx) (11 slides, standard layouts)
 - 📄 **Slides as PDF**: [`demo/slides.pdf`](./demo/slides.pdf) (previews inline on GitHub)
 - 🖼️ **Slides as PNGs**: [`demo/slides/`](./demo/slides/) (one image per slide, always viewable)
